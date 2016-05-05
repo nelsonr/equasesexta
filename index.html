@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <title>É quase sexta!</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
+
+    <style type="text/css">
+        body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-size: 16px;
+        }
+
+        main h1 {
+            font-family: 'Bangers', Helvetica, Arial, sans-serif;
+            font-size: 4.4em;
+            padding: 0.6em;
+            background-color: rgba(0,0,0,0.8);
+            color: #FFF;
+            font-weight: normal;
+            width: 100%;
+            text-align: center;
+        }
+
+        .powered-by-giphy {
+            position: absolute;
+            bottom: 1em;
+            right: 1em;
+            background-color: rgba(0,0,0,0.6);
+            padding: 1em;
+        }
+
+        .powered-by-giphy img {
+            display: block;
+            max-width: 80px;
+            height: auto;
+        }
+
+        @media screen and (orientation: portrait) {
+            main h1 {
+                font-size: 16vw;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1 id="text"></h1>
+
+        <div class="powered-by-giphy">
+            <img src="Poweredby_640px-Black_VertLogo.png" width="100" alt="">
+        </div>
+    </main>
+
+    <script type="text/javascript">
+        date = new Date();
+        weekday = date.getDay();
+        friday = 5;
+        weekday = 0;
+
+        keywords = ['lazy', 'monday', 'tuesday', 'wednesday', 'almost there', 'party hard', 'party hard'];
+        giphy_keyword = keywords[weekday];
+
+        if (weekday === 6) {
+            // Saturday
+            weekday = -1;
+        }
+
+        daysUntilFriday = Math.abs(friday - weekday);
+        
+        if (daysUntilFriday === 0) {
+            message = 'É sexta-feira! Yeah!';
+        } else {
+            message = 'É ' + 'quase '.repeat(daysUntilFriday) + ' sexta!';
+        }
+
+        textEl = document.getElementById('text');
+        textEl.innerHTML = message;
+        bodyEl = document.querySelector('body');
+
+        req = new XMLHttpRequest();
+        req.open('GET', 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + giphy_keyword, true);
+        req.onreadystatechange = function() {
+            if (req.readyState === XMLHttpRequest.DONE) {
+              if (req.status === 200) {
+                giphy = JSON.parse(req.responseText);
+                bodyEl.setAttribute('style', 'background-image: url("' + giphy.data.image_original_url + '");');
+              }
+            }
+        };
+        req.send();
+    </script>
+</body>
+</html>
