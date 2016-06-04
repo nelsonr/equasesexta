@@ -2,6 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>É quase sexta!</title>
 
     <!-- Facebook Open Graph -->
@@ -31,6 +32,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             height: 100vh;
             font-size: 16px;
         }
@@ -44,6 +46,30 @@
             font-weight: normal;
             width: 100%;
             text-align: center;
+            margin: 0;
+            margin-bottom: 0.3em;
+        }
+
+        .link {
+            display: inline-block;
+            background-color: rgba(0,0,0,0.6);
+            padding: 1em;
+            color: #FFF;
+            text-decoration: none;
+            font-family: 'Bangers', Helvetica, Arial, sans-serif;
+            letter-spacing: 1.1px;
+            -webkit-font-smoothing: antialiased;
+            font-size: 1.5em;
+            margin-right: 1em;
+        }
+
+        .link:last-child {
+            margin-right: 0;
+        }
+
+        .link:hover {
+            background-color: rgba(255,255,255,0.6);
+            color: #000;
         }
 
         .powered-by-giphy {
@@ -81,6 +107,11 @@
 
     <main>
         <h1 id="text"></h1>
+        
+        <div class="container">
+            <a href="#" class="link share">Partilhar</a>
+            <a href="?" class="link">Random</a>
+        </div>
 
         <div class="powered-by-giphy">
             <img src="Poweredby_640px-Black_VertLogo.png" width="100" alt="">
@@ -112,18 +143,28 @@
         textEl = document.getElementById('text');
         textEl.innerHTML = message;
         bodyEl = document.querySelector('body');
+        shareEl = document.querySelector('.share');
+        shareUrl = document.location.search.match(/\?giphy=(.*)$/);
 
-        req = new XMLHttpRequest();
-        req.open('GET', 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + giphy_keyword, true);
-        req.onreadystatechange = function() {
-            if (req.readyState === XMLHttpRequest.DONE) {
-              if (req.status === 200) {
-                giphy = JSON.parse(req.responseText);
-                bodyEl.setAttribute('style', 'background-image: url("' + giphy.data.image_original_url + '");');
-              }
-            }
-        };
-        req.send();
+        if (shareUrl) {
+            shareId = shareUrl[1];
+            giphyUrl = 'http://media2.giphy.com/media/' + shareId + '/giphy.gif';
+            bodyEl.setAttribute('style', 'background-image: url("' + giphyUrl + '");');
+            shareEl.setAttribute('href', '?giphy=' + shareId);
+        } else {
+            req = new XMLHttpRequest();
+            req.open('GET', 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + giphy_keyword, true);
+            req.onreadystatechange = function() {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                  if (req.status === 200) {
+                    giphy = JSON.parse(req.responseText);
+                    bodyEl.setAttribute('style', 'background-image: url("' + giphy.data.image_original_url + '");');
+                    shareEl.setAttribute('href', '?giphy=' + giphy.data.id);
+                  }
+                }
+            };
+            req.send();
+        }
     </script>
 </body>
 </html>
